@@ -38,25 +38,47 @@ export default class Triangle extends Template{
             "length": 24 * 1000,
             "height": 1200,
         };
+
+        this.__placementTool = "componentPositionTool";
+
         this.__toolParams = {
             position: "position"
         }
         this.__featureParams = {
             position: "position",
-            portRadius: "portRadius"
+            width: "width",
+            length: "length",
+            height: "height"
         };
         this.__targetParams = {
-            position: "position",
-            portRadius: "portRadius"
+            width: "width",
+            length: "length",
+            height: "height"
         }
+
+        this.__renderKeys = ["FLOW"];
+
+        this.__mint = "TRIANGLE";
+
 
     }
 
     render2D(params, key){
+        console.log("krishna test:",params);
+        let position = params["position"];
+        let radius = params["width"] / Math.sqrt(3)
+        let color1 = params["color"];
+        let pos = new paper.Point(position[0], position[1]);
+        let outerCircle = new paper.Path.RegularPolygon(pos,3, radius);
+        outerCircle.fillColor = color1;
+        return outerCircle;
 
     }
 
     render2DTarget(key, params){
+        let render = this.render2D(params, key);
+        render.fillColor.alpha = 0.5;
+        return render;
 
     }
 }

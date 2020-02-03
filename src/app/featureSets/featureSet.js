@@ -21,6 +21,7 @@ import Valve from "../library/valve";
 import Valve3D from "../library/valve3D";
 import Tree from "../library/tree";
 import YTree from "../library/ytree";
+import Triangle from "../library/triangle";
 
 export default class FeatureSet {
     constructor(definitions, tools, render2D, render3D, setString) {
@@ -61,6 +62,8 @@ export default class FeatureSet {
             "Valve": {"object": new Valve(), "key":null },
             "Valve3D": {"object": new Valve3D(), "key":"FLOW" },
             "Valve3D_control": {"object": new Valve3D(), "key":"CONTROL" },
+            "Triangle": {"object": new Triangle(), "key":"FLOW"},
+            "Triangle_control": {"object": new Triangle(), "key":"CONTROL"}
         };
 
         // this.__checkDefinitions();
