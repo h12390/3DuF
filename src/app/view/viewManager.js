@@ -636,6 +636,7 @@ export default class ViewManager {
     }
 
     adjustParams(typeString, setString, valueString, value){
+        console.log("Yuhang: In adjustParams");
         let selectedFeatures = this.view.getSelectedFeatures();
         if (selectedFeatures.length > 0){
             let correctType = this.getFeaturesOfType(typeString, setString, selectedFeatures);
@@ -643,11 +644,25 @@ export default class ViewManager {
                 this.adjustAllFeatureParams(valueString, value, correctType);
             }
 
-            //Check if any components are selected
+            //Check if any components are sele1cted
             //TODO: modify parameters window to not have chain of updates
             //Cycle through all components and connections and change the parameters
             for(let i in this.view.selectedComponents){
+                //TODO: Get old size , position info and do the the magic
+                let oldBound = this.view.selectedComponents[i].getBoundingRectangle();
                 this.view.selectedComponents[i].updateParameter(valueString, value);
+                let newBound = this.view.selectedComponents[i].getBoundingRectangle();
+                
+                let components = this.__currentDevice.getComponents();
+                //move right-side component
+                let distanceToRight = newBound.rightCenter.x - oldBound.rightCenter.x;
+                for(let i = 0; i < components.length; i++) {
+                    let centerPosition = components[i].getCenterPosition();
+                    if(centerPosition[0] > oldBound.rightCenter.x){
+                        components[i].updateComponetPosition([centerPosition[0]+distanceToRight, centerPosition[1]]);
+                    }
+                }
+                
             }
             for(let i in this.view.selectedConnections){
                 this.view.selectedConnections[i].updateParameter(valueString, value);
