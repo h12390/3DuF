@@ -272,7 +272,8 @@ export default class Component {
                 bounds = render.bounds;
             }
         }
-
+        //console.log("bounds:");
+        //console.log(bounds);
         return bounds;
     }
 
