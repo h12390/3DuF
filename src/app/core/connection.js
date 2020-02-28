@@ -82,7 +82,8 @@ export default class Connection {
      */
     updateParameter(key, value){
         // this.__params.updateParameter(key, value);
-        this.__params[key] = value;
+        this.__params.parameters[key] = value;
+        console.log(value);
         // this.updateView();
     }
 
@@ -228,6 +229,8 @@ export default class Connection {
         return this.__params;
     }
 
+
+
     /**
      * Sets the params associated with the component
      * @param params key -> Parameter Set
@@ -235,14 +238,17 @@ export default class Connection {
     setParams(params){
         this.__params = params;
         //TODO: Modify all the associated Features
-        for(let key in params){
-            let value = params[key];
+        for(let key in params.parameters){
+            let value = params.parameters[key];
             for(let i in this.__features){
                 let featureidtochange = this.__features[i];
 
                 //Get the feature id and modify it
                 let feature = Registry.currentDevice.getFeatureByID(featureidtochange);
-                feature.updateParameter(key, value.getValue());
+                if(value){
+                    //console.log("value: " + value);
+                    feature.updateParameter(key, this.__params.getValue(key));
+                }
             }
 
         }

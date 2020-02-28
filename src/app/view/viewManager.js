@@ -8,6 +8,7 @@ const Colors = require("./colors");
 import Device from '../core/device';
 import ChannelTool from "./tools/channelTool"; //= require("./tools/channelTool");
 
+
 import SelectTool from "./tools/selectTool"; //= require("./tools/selectTool");
 import InsertTextTool from "./tools/insertTextTool"; //= require("./tools/insertTextTool");
 import SimpleQueue from "../utils/simpleQueue"; //= require("../utils/SimpleQueue");
@@ -639,12 +640,12 @@ export default class ViewManager {
         console.log("Yuhang: In adjustParams");
         let selectedFeatures = this.view.getSelectedFeatures();
         if (selectedFeatures.length > 0){
-            /** 
+            /*
             let correctType = this.getFeaturesOfType(typeString, setString, selectedFeatures);
             if (correctType.length >0 ){
                 this.adjustAllFeatureParams(valueString, value, correctType);
             }
-             */
+            */
             //Check if any components are sele1cted
             //TODO: modify parameters window to not have chain of updates
             //Cycle through all components and connections and change the parameters
@@ -661,31 +662,62 @@ export default class ViewManager {
                 console.log("connections: " + connections);
                 //move right-side component
                 let distanceToRight = newBound.rightCenter.x - oldBound.rightCenter.x;
+                let distanceToLeft = oldBound.left - newBound.left;
                 let distanceToBottom = newBound.bottom - oldBound.bottom;
+                let distanceToTop = oldBound.top - newBound.top;
+
                 console.log("new: "+ newBound.rightCenter.x);
                 console.log("old: "+ oldBound.rightCenter.x);
                 console.log("distanceToRight: " + distanceToRight);
+                console.log("distanceToLeft: " + distanceToLeft);
+                console.log("distanceToBottom: " + distanceToBottom);
+                console.log("distanceToTop: " + distanceToTop);
                 for(let i = 0; i < components.length; i++) {
-                    let Position = components[i].getBoundingRectangle();
+                    let Position = components[i].getPosition();
+                    let CenterPosition = components[i].getCenterPosition();
                     let id = components[i].getID();
                     if(id !== selectedId){
                         //console.log("center postion:"+ centerPosition);
-                        if(Position.centerX > oldBound.rightCenter.x){
-                            components[i].updateComponetPosition([Position.x+distanceToRight, Position.y]);
+                        if(CenterPosition[0] > oldBound.rightCenter.x){
+                            components[i].updateComponetPosition([Position[0]+distanceToRight, Position[1]]);
                             //components[i].updateComponetPosition([0,0]);
                         }
-                        if(Position.centerY > oldBound.bottom){
-                            components[i].updateComponetPosition([Position.x , Position.y + distanceToBottom]);
+                        if(CenterPosition[1] > oldBound.bottom){
+                            components[i].updateComponetPosition([Position[0] , Position[1] + distanceToBottom]);
+                        }
+                        if(CenterPosition[0] < oldBound.left){
+                            components[i].updateComponetPosition([Position[0] - distanceToLeft, Position[1]]);
+                        }
+                        if(CenterPosition[1] < oldBound.top){
+                            components[i].updateComponetPosition([Position[0], Position[1] - distanceToTop]);
                         }
                     }
                     
                 }
-                /*
-                for (let i = 0; i < connections.length; i ++){
-                    let Position = connections[i].getPosition();
-                    console.log("Connection Postion: " + Position);
+                
+                for (let i = 0; i < connections.length; i++){
+                    // remove the connection
+                    //let featureID = connections[i].getFeatureIDs();
+                    //this.currentDevice.removeFeatureByID(featureID[0]);
+                    //this.currentDevice.removeConnection(connections[i]);
+                    let path = connections[i].getPaths();
+                    let params = connections[i].getParams();
+                    console.log(path);
+                    //console.log(params);
+                    //console.log(connections[i].getParams().getValue('wayPoints'));
+                    connections[i].updateParameter('start',[1000,1000]);
+                    connections[i].updateParameter('end',[6000,6000]);
+                    connections[i].updateParameter('wayPoints',[[1000,1000],[6000,6000]]);
+                    console.log("finish");
+                    connections[i].setParams(connections[i].getParams());
+
+
                 }
-                */
+
+
+
+                
+            
                 
             }
             for(let i in this.view.selectedConnections){
